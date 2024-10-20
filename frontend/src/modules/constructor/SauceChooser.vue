@@ -23,7 +23,7 @@
 import sauces from "./../../mocks/sauces.json";
 defineProps({
   modelValue: {
-    type: Number,
+    type: String,
     required: true,
   },
 });
