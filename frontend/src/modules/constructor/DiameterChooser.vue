@@ -13,8 +13,10 @@
           <input
             type="radio"
             name="diameter"
-            :value="`${pizzaSize[size.multiplier]}`"
+            :value="size.multiplier"
+            :checked="modelValue === size.multiplier"
             class="visually-hidden"
+            @input="emit('update:modelValue', $event.target.value)"
           />
           <span>{{ size.name }}</span>
         </label>
@@ -26,6 +28,14 @@
 <script setup>
 import sizes from "@/mocks/sizes.json";
 const pizzaSize = { 1: "small", 2: "normal", 3: "big" };
+
+defineProps({
+  modelValue: {
+    type: String,
+    required: true,
+  },
+});
+const emit = defineEmits(["update:modelValue"]);
 </script>
 
 <style lang="scss" scoped>
