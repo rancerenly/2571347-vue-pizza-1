@@ -1,12 +1,12 @@
 <script setup>
-import AppHeader from "./layouts/AppHeader.vue";
-import HomeView from "./views/HomeView.vue";
+import { AppLayout } from "@/layouts";
 </script>
 
 <template>
   <div class="main__wrapper">
-    <AppHeader></AppHeader>
-    <HomeView></HomeView>
+    <AppLayout>
+      <router-view />
+    </AppLayout>
   </div>
 </template>
 
