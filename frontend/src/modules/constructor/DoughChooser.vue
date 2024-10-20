@@ -95,48 +95,4 @@ const emit = defineEmits(["update:modelValue"]);
   margin-right: auto;
   margin-bottom: 15px;
 }
-.sheet {
-  padding-top: 15px;
-  border-radius: 8px;
-  background-color: $white;
-  box-shadow: $shadow-light;
-}
-.sheet__title {
-  padding-right: 18px;
-  padding-left: 18px;
-}
-.sheet__content {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-top: 8px;
-  padding-top: 18px;
-  padding-right: 18px;
-  padding-left: 18px;
-  border-top: 1px solid rgba($green-500, 0.1);
-}
-.title {
-  box-sizing: border-box;
-  width: 100%;
-  margin: 0;
-  color: $black;
-  &--big {
-    @include b-s36-h42;
-  }
-  &--small {
-    @include b-s18-h21;
-  }
-}
-.visually-hidden {
-  position: absolute;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  white-space: nowrap;
-  border: 0;
-  clip-path: inset(100%);
-}
 </style>
