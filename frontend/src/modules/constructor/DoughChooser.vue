@@ -7,15 +7,15 @@
           v-for="dough in doughs"
           :key="dough.id"
           class="dough__input"
-          :class="`
-                dough__input--${doughSize[dough.id]}`"
+          :class="`dough__input--${doughSize[dough.id]}`"
         >
           <input
             type="radio"
             name="dought"
-            value="light"
             class="visually-hidden"
-            checked
+            :value="dough.type"
+            :checked="modelValue === dough.type"
+            @input="emit('update:modelValue', $event.target.value)"
           />
           <b>{{ dough.name }}</b>
           <span>{{ dough.description }}</span>
@@ -26,8 +26,16 @@
 </template>
 
 <script setup>
-import doughs from "@/mocks/dough.json";
+import doughs from "./../../mocks/dough.json";
+
 const doughSize = { 1: "light", 2: "large" };
+defineProps({
+  modelValue: {
+    type: String,
+    required: true,
+  },
+});
+const emit = defineEmits(["update:modelValue"]);
 </script>
 
 <style lang="scss" scoped>
