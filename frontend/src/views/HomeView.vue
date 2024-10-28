@@ -37,9 +37,6 @@
             </button>
           </div>
         </div>
-        <div class="content__wrapper__result">
-          <div class="content">Ингедиенты: {{ ingredientsValue }}</div>
-        </div>
       </div>
     </form>
   </main>
