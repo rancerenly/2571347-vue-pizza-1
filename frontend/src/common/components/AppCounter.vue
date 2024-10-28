@@ -3,7 +3,7 @@
     <button
       type="button"
       class="counter__button counter__button--minus"
-      :disabled="value < 1"
+      :disabled="value === min"
       @click="decrement"
     >
       <span class="visually-hidden">Меньше</span>
@@ -18,6 +18,8 @@
     <button
       type="button"
       class="counter__button counter__button--plus"
+      :class="{ 'counter__button--orange': accent }"
+      :disabled="value === max"
       @click="increment"
     >
       <span class="visually-hidden">Больше</span>
@@ -31,17 +33,34 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  accent: {
+    type: Boolean,
+    default: false,
+  },
+  max: {
+    type: Number,
+    default: 3,
+  },
+  min: {
+    type: Number,
+    default: 0,
+  },
 });
 const emit = defineEmits(["update:value"]);
+
 const set = (event) => {
   const newValue = Number(event.target.value) || 0;
   emit("update:value", newValue);
 };
+
 const increment = () => {
-  emit("update:value", props.value + 1);
+  if (props.value < props.max) {
+    emit("update:value", props.value + 1);
+  }
 };
+
 const decrement = () => {
-  if (props.value > 0) {
+  if (props.value > props.min) {
     emit("update:value", props.value - 1);
   }
 };
@@ -49,11 +68,13 @@ const decrement = () => {
 
 <style lang="scss" scoped>
 @import "@/assets/scss/app.scss";
+
 .ingredients__counter {
   width: 54px;
   margin-top: 10px;
   margin-left: 36px;
 }
+
 .counter__button {
   $el: &;
   $size_icon: 50%;
@@ -68,8 +89,10 @@ const decrement = () => {
   border: none;
   border-radius: 50%;
   outline: none;
+
   &--minus {
     background-color: $purple-100;
+
     &::before {
       @include p_center-all;
       width: $size_icon;
@@ -78,24 +101,31 @@ const decrement = () => {
       border-radius: 2px;
       background-color: $black;
     }
+
     &:hover:not(:active):not(:disabled) {
       background-color: $purple-200;
     }
+
     &:active:not(:disabled) {
       background-color: $purple-300;
     }
+
     &:focus:not(:disabled) {
       box-shadow: $shadow-regular;
     }
+
     &:disabled {
       cursor: default;
+
       &::before {
         opacity: 0.1;
       }
     }
   }
+
   &--plus {
     background-color: $green-500;
+
     &::before {
       @include p_center-all;
       width: $size_icon;
@@ -104,6 +134,7 @@ const decrement = () => {
       border-radius: 2px;
       background-color: $white;
     }
+
     &::after {
       @include p_center-all;
       width: $size_icon;
@@ -113,30 +144,38 @@ const decrement = () => {
       border-radius: 2px;
       background-color: $white;
     }
+
     &:hover:not(:active):not(:disabled) {
       background-color: $green-400;
     }
+
     &:active:not(:disabled) {
       background-color: $green-600;
     }
+
     &:focus:not(:disabled) {
       box-shadow: $shadow-regular;
     }
+
     &:disabled {
       cursor: default;
       opacity: 0.3;
     }
   }
+
   &--orange {
     background-color: $orange-200;
+
     &:hover:not(:active):not(:disabled) {
       background-color: $orange-100;
     }
+
     &:active:not(:disabled) {
       background-color: $orange-300;
     }
   }
 }
+
 .counter__input {
   @include r-s14-h16;
   box-sizing: border-box;
@@ -149,6 +188,7 @@ const decrement = () => {
   border-radius: 10px;
   outline: none;
   background-color: transparent;
+
   &:focus {
     box-shadow: inset $shadow-regular;
   }
