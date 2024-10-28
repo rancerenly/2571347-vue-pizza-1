@@ -7,7 +7,9 @@
         <DiameterChooser v-model="diameterEnumValue" />
         <div class="content__ingredients">
           <div class="sheet">
-            <h2 class="title title--small sheet__title">Выберите ингредиенты</h2>
+            <h2 class="title title--small sheet__title">
+              Выберите ингредиенты
+            </h2>
 
             <div class="sheet__content ingredients">
               <SauceChooser v-model="sauceValue" />
@@ -44,6 +46,18 @@ import IngredientsChooser from "../modules/constructor/IngredientsChooser.vue";
 import PizzaObject from "../modules/constructor/PizzaObject.vue";
 import PizzaNameInput from "../modules/constructor/PizzaNameInput.vue";
 
+import {
+  normalizeDough,
+  normalizeIngredients,
+  normalizeSauces,
+  normalizeSize,
+} from "@/common/helpers/normalize";
+
+import doughJSON from "@/mocks/dough.json";
+import ingredientsJSON from "@/mocks/ingredients.json";
+import saucesJSON from "@/mocks/sauces.json";
+import sizesJSON from "@/mocks/sizes.json";
+
 import { ref } from "vue";
 import { Ingredients } from "../modules/constructor/IngedientChooserHelper";
 
@@ -52,6 +66,14 @@ const diameterEnumValue = ref("");
 const pizzaNameValue = ref("");
 const sauceValue = ref("");
 const ingredientsValue = ref(new Ingredients());
+
+
+const doughItems = doughJSON.map(normalizeDough);
+const ingredientItems = ingredientsJSON.map(normalizeIngredients);
+const sauceItems = saucesJSON.map(normalizeSauces);
+const sizeItems = sizesJSON.map(normalizeSize);
+
+
 </script>
 <style lang="scss" scoped>
 @import "@/assets/scss/app.scss";
