@@ -3,8 +3,8 @@
     <form action="#" method="post">
       <div class="content__wrapper">
         <h1 class="title title--big">Конструктор пиццы</h1>
-        <DoughChooser v-model="doughtValue" />
-        <DiameterChooser v-model="diameterEnumValue" />
+        <DoughChooser v-model="pizza.dough" :doughs="doughItems" />
+        <DiameterChooser v-model="pizza.size" :diameter="sizeItems" />
         <div class="content__ingredients">
           <div class="sheet">
             <h2 class="title title--small sheet__title">
@@ -12,26 +12,33 @@
             </h2>
 
             <div class="sheet__content ingredients">
-              <SauceChooser v-model="sauceValue" />
-              <IngredientsChooser v-model="ingredientsValue" />
+              <SauceChooser v-model="pizza.sauce" :sauces="sauceItems" />
+              <IngredientsChooser
+                v-model="pizza.ingredients"
+                :ingredients="ingredientItems"
+                @update:model-value="updateIngredientAmount"
+              />
             </div>
           </div>
         </div>
 
         <div class="content__pizza">
-          <PizzaNameInput v-model="pizzaNameValue" />
-          <PizzaObject />
+          <PizzaNameInput v-model="pizza.name" />
+          <PizzaObject
+            :dough="pizza.dough"
+            :sauce="pizza.sauce"
+            :ingredients="pizza.ingredients"
+            @drop="addIngredient"
+          />
           <div class="content__result">
-            <p>Итого: 0 ₽</p>
-            <button type="button" class="button" disabled>Готовьте!</button>
+            <p>Итого: {{ price }} ₽</p>
+            <button type="button" class="button" :disabled="disableSubmit">
+              Готовьте!
+            </button>
           </div>
         </div>
         <div class="content__wrapper__result">
           <div class="content">Ингедиенты: {{ ingredientsValue }}</div>
-          <div class="content">Тесто: {{ doughtValue }}</div>
-          <div class="content">Диаметр: {{ diameterEnumValue }}</div>
-          <div class="content">Название пиццы: {{ pizzaNameValue }}</div>
-          <div class="content">Соус: {{ sauceValue }}</div>
         </div>
       </div>
     </form>
@@ -39,6 +46,8 @@
 </template>
 
 <script setup>
+import { computed, reactive } from "vue";
+
 import DoughChooser from "../modules/constructor/DoughChooser.vue";
 import DiameterChooser from "../modules/constructor/DiameterChooser.vue";
 import SauceChooser from "../modules/constructor/SauceChooser.vue";
@@ -58,22 +67,57 @@ import ingredientsJSON from "@/mocks/ingredients.json";
 import saucesJSON from "@/mocks/sauces.json";
 import sizesJSON from "@/mocks/sizes.json";
 
-import { ref } from "vue";
 import { Ingredients } from "../modules/constructor/IngedientChooserHelper";
-
-const doughtValue = ref("");
-const diameterEnumValue = ref("");
-const pizzaNameValue = ref("");
-const sauceValue = ref("");
-const ingredientsValue = ref(new Ingredients());
-
 
 const doughItems = doughJSON.map(normalizeDough);
 const ingredientItems = ingredientsJSON.map(normalizeIngredients);
 const sauceItems = saucesJSON.map(normalizeSauces);
 const sizeItems = sizesJSON.map(normalizeSize);
 
+const pizza = reactive({
+  name: "",
+  dough: doughItems[0].value,
+  size: sizeItems[0].value,
+  sauce: sauceItems[0].value,
+  ingredients: new Ingredients(),
+});
 
+const price = computed(() => {
+  const { dough, size, sauce, ingredients } = pizza;
+
+  const sizeMultiplier =
+    sizeItems.find((item) => item.value === size)?.multiplier ?? 1;
+
+  const doughPrice =
+    doughItems.find((item) => item.value === dough)?.price ?? 0;
+
+  const saucePrice =
+    sauceItems.find((item) => item.value === sauce)?.price ?? 0;
+
+  /*
+   * Здесь мы при помощи метода map превращаем массив ингредиентов
+   * в массив значений, соответствующих итоговой стоимости каждого из них - просто умножив известную цену на количество.
+   * После чего методом reduce вычисляем сумму всех элементов массива, что даст нам общую стоимость всех ингредиентов.
+   */
+  const ingredientsPrice = ingredientItems
+    .map((item) => ingredients[item.value] * item.price)
+    .reduce((acc, item) => acc + item, 0);
+
+  return (doughPrice + saucePrice + ingredientsPrice) * sizeMultiplier;
+});
+
+const disableSubmit = computed(() => {
+  return pizza.name.length === 0 || price.value === 0;
+});
+
+const addIngredient = (ingredient) => {
+  console.log("add", ingredient);
+  pizza.ingredients[ingredient]++;
+};
+
+const updateIngredientAmount = (ingredients) => {
+  pizza.ingredients = ingredients;
+};
 </script>
 <style lang="scss" scoped>
 @import "@/assets/scss/app.scss";
