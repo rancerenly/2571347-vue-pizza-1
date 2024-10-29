@@ -21,11 +21,14 @@ watch(
         layout.value = AppLayoutDefault;
       }
     } catch (e) {
-      console.log("error");
-      console.error("Динамический шаблон не найден. Установлен шаблон по-умолчанию.", e);
+      console.log("errorr");
+      console.error(
+        "Динамический шаблон не найден. Установлен шаблон по-умолчанию.",
+        e,
+      );
       layout.value = AppLayoutDefault;
     }
-  }
+  },
 );
 </script>
 <style lang="scss" scoped>

@@ -10,9 +10,9 @@
       <input
         type="radio"
         name="sauce"
-        :value="sauce.name"
-        :checked="modelValue === sauce.name"
-        @input="emit('update:modelValue', $event.target.value)"
+        :value="sauce.value"
+        :checked="modelValue === sauce.value"
+        @input="emit('update:modelValue', sauce.value)"
       />
       <span>{{ sauce.name }}</span>
     </label>
@@ -20,11 +20,14 @@
 </template>
 
 <script setup>
-import sauces from "./../../mocks/sauces.json";
 defineProps({
   modelValue: {
     type: String,
     required: true,
+  },
+  sauces: {
+    type: Array,
+    default: () => [],
   },
 });
 const emit = defineEmits(["update:modelValue"]);
