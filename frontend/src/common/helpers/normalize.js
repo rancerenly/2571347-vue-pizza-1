@@ -3,7 +3,6 @@ import ingredients from "@/common/data/ingredients";
 import sauces from "@/common/data/sauces";
 import sizes from "@/common/data/sizes";
 
-
 export const normalizeDough = (dough) => {
   return {
     ...dough,
