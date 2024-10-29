@@ -1,5 +1,5 @@
 <template>
-  <div class="counter counter--orange ingredients__counter">
+  <div class="counter" :class="{ ingredients__counter: ingredientsCounter }">
     <button
       type="button"
       class="counter__button counter__button--minus"
@@ -44,6 +44,10 @@ const props = defineProps({
   min: {
     type: Number,
     default: 0,
+  },
+  ingredientsCounter: {
+    type: Boolean,
+    default: true,
   },
 });
 const emit = defineEmits(["update:value"]);
@@ -192,5 +196,11 @@ const decrement = () => {
   &:focus {
     box-shadow: inset $shadow-regular;
   }
+}
+.counter {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
 }
 </style>

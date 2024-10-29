@@ -4,7 +4,11 @@
       <h2 class="title title--small sheet__title">Выберите тесто</h2>
 
       <div class="sheet__content">
-        <label v-for="doughType in doughs" :key="doughType.id" class="dough__input">
+        <label
+          v-for="doughType in doughs"
+          :key="doughType.id"
+          class="dough__input"
+        >
           <input
             type="radio"
             name="dough"

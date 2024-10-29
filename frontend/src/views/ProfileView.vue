@@ -128,6 +128,10 @@
 <style lang="scss" scoped>
 @import "@/assets/scss/ds-system/ds.scss";
 
+.layout__address {
+  margin-top: 16px;
+}
+
 .user {
   display: flex;
   align-items: center;

@@ -50,20 +50,10 @@ const props = defineProps({
 const emit = defineEmits(["drop"]);
 
 const pizzaIngredients = computed(() => {
-  return Object.entries(props.ingredients).reduce((result, entry) => {
-    console.log(result, entry);
-    console.log(props);
-    const [key, value] = entry;
-
-    if (value > 0) {
-      result[key] = value;
-    }
-
-    return result;
-  }, {});
+  return Object.fromEntries(
+    Object.entries(props.ingredients).filter(([, value]) => value > 0),
+  );
 });
-
-console.log(pizzaIngredients);
 </script>
 
 <style lang="scss" scoped>

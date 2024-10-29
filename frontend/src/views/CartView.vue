@@ -30,11 +30,12 @@
               </div>
             </div>
 
-            <app-counter
+            <AppCounter
               class="cart-list__counter"
               :value="value"
               accent
-              @input="value = $event"
+              :ingredients-counter="false"
+              @update:value="value = $event"
             />
 
             <div class="cart-list__price">
@@ -67,11 +68,12 @@
               </div>
             </div>
 
-            <app-counter
+            <AppCounter
               class="cart-list__counter"
               :value="value"
               accent
-              @input="value = $event"
+              :ingredients-counter="false"
+              @update:value="value = $event"
             />
 
             <div class="cart-list__price">
@@ -98,11 +100,12 @@
               </p>
 
               <div class="additional-list__wrapper">
-                <app-counter
+                <AppCounter
                   class="additional-list__counter"
                   :value="value"
                   accent
-                  @input="value = $event"
+                  :ingredients-counter="false"
+                  @update:value="value = $event"
                 />
 
                 <div class="additional-list__price">
@@ -122,11 +125,12 @@
               </p>
 
               <div class="additional-list__wrapper">
-                <app-counter
+                <AppCounter
                   class="additional-list__counter"
                   :value="value"
                   accent
-                  @input="value = $event"
+                  :ingredients-counter="false"
+                  @update:value="value = $event"
                 />
 
                 <div class="additional-list__price">
@@ -146,11 +150,12 @@
               </p>
 
               <div class="additional-list__wrapper">
-                <app-counter
+                <AppCounter
                   class="additional-list__counter"
                   :value="value"
                   accent
-                  @input="value = $event"
+                  :ingredients-counter="false"
+                  @update:value="value = $event"
                 />
 
                 <div class="additional-list__price">
@@ -241,9 +246,14 @@ const getImage = (image) => {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "@/assets/scss/ds-system/ds.scss";
 @import "@/assets/scss/mixins/mixins.scss";
+
+.container {
+  width: 770px;
+  margin: 0 auto;
+}
 
 .layout-form {
   display: flex;
@@ -534,5 +544,18 @@ const getImage = (image) => {
   &:focus {
     border-color: $green-500;
   }
+}
+
+.button--arrow::before {
+  content: "";
+  background-image: url("@/assets/img/button-arrow.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  margin-right: 16px;
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  vertical-align: middle;
+  -webkit-transform: translateY(-1px);
 }
 </style>

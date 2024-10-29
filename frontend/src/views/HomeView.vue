@@ -3,8 +3,8 @@
     <form action="#" method="post">
       <div class="content__wrapper">
         <h1 class="title title--big">Конструктор пиццы</h1>
-        <DoughChooser v-model="pizza.dough" :doughs="doughItems" />
-        <DiameterChooser v-model="pizza.size" :diameter="sizeItems" />
+        <DoughChooser v-model="pizza.dough" :doughs="dougs" />
+        <DiameterChooser v-model="pizza.size" :diameter="sizes" />
         <div class="content__ingredients">
           <div class="sheet">
             <h2 class="title title--small sheet__title">
@@ -12,11 +12,11 @@
             </h2>
 
             <div class="sheet__content ingredients">
-              <SauceChooser v-model="pizza.sauce" :sauces="sauceItems" />
+              <SauceChooser v-model="pizza.sauce" :sauces="sauces" />
               <IngredientsChooser
                 v-model="pizza.ingredients"
-                :ingredients="ingredientItems"
-                @update:model-value="updateIngredientAmount"
+                :ingredients="ingredients"
+                @update:model-value="updateIngredients"
               />
             </div>
           </div>
@@ -65,54 +65,33 @@ import saucesJSON from "@/mocks/sauces.json";
 import sizesJSON from "@/mocks/sizes.json";
 
 import { Ingredients } from "../modules/constructor/IngedientChooserHelper";
+import getPrice from "@/common/helpers/price";
+import isDisableCookButton from "@/common/helpers/disableButton";
 
-const doughItems = doughJSON.map(normalizeDough);
-const ingredientItems = ingredientsJSON.map(normalizeIngredients);
-const sauceItems = saucesJSON.map(normalizeSauces);
-const sizeItems = sizesJSON.map(normalizeSize);
+const dougs = doughJSON.map(normalizeDough);
+const ingredients = ingredientsJSON.map(normalizeIngredients);
+const sauces = saucesJSON.map(normalizeSauces);
+const sizes = sizesJSON.map(normalizeSize);
 
 const pizza = reactive({
   name: "",
-  dough: doughItems[0].value,
-  size: sizeItems[0].value,
-  sauce: sauceItems[0].value,
+  dough: dougs[0].value,
+  size: sizes[0].value,
+  sauce: sauces[0].value,
   ingredients: new Ingredients(),
 });
 
 const price = computed(() => {
-  const { dough, size, sauce, ingredients } = pizza;
-
-  const sizeMultiplier =
-    sizeItems.find((item) => item.value === size)?.multiplier ?? 1;
-
-  const doughPrice =
-    doughItems.find((item) => item.value === dough)?.price ?? 0;
-
-  const saucePrice =
-    sauceItems.find((item) => item.value === sauce)?.price ?? 0;
-
-  /*
-   * Здесь мы при помощи метода map превращаем массив ингредиентов
-   * в массив значений, соответствующих итоговой стоимости каждого из них - просто умножив известную цену на количество.
-   * После чего методом reduce вычисляем сумму всех элементов массива, что даст нам общую стоимость всех ингредиентов.
-   */
-  const ingredientsPrice = ingredientItems
-    .map((item) => ingredients[item.value] * item.price)
-    .reduce((acc, item) => acc + item, 0);
-
-  return (doughPrice + saucePrice + ingredientsPrice) * sizeMultiplier;
+  return getPrice(pizza, dougs, ingredients, sauces, sizes);
 });
 
-const disableSubmit = computed(() => {
-  return pizza.name.length === 0 || price.value === 0;
-});
+const disableSubmit = computed(() => isDisableCookButton(pizza));
 
 const addIngredient = (ingredient) => {
-  console.log("add", ingredient);
   pizza.ingredients[ingredient]++;
 };
 
-const updateIngredientAmount = (ingredients) => {
+const updateIngredients = (ingredients) => {
   pizza.ingredients = ingredients;
 };
 </script>
