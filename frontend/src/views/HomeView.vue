@@ -43,7 +43,7 @@
 </template>
 
 <script setup>
-import { computed, reactive } from "vue";
+import { computed } from "vue";
 
 import DoughChooser from "../modules/constructor/DoughChooser.vue";
 import DiameterChooser from "../modules/constructor/DiameterChooser.vue";
@@ -64,22 +64,18 @@ import ingredientsJSON from "@/mocks/ingredients.json";
 import saucesJSON from "@/mocks/sauces.json";
 import sizesJSON from "@/mocks/sizes.json";
 
-import { Ingredients } from "../modules/constructor/IngedientChooserHelper";
 import getPrice from "@/common/helpers/price";
 import isDisableCookButton from "@/common/helpers/disableButton";
+import { usePizzaStore } from "@/stores/pizzaStore";
 
 const dougs = doughJSON.map(normalizeDough);
 const ingredients = ingredientsJSON.map(normalizeIngredients);
 const sauces = saucesJSON.map(normalizeSauces);
 const sizes = sizesJSON.map(normalizeSize);
 
-const pizza = reactive({
-  name: "",
-  dough: dougs[0].value,
-  size: sizes[0].value,
-  sauce: sauces[0].value,
-  ingredients: new Ingredients(),
-});
+const pizzaStore = usePizzaStore();
+
+const pizza = pizzaStore.getPizza;
 
 const price = computed(() => {
   return getPrice(pizza, dougs, ingredients, sauces, sizes);
@@ -88,11 +84,11 @@ const price = computed(() => {
 const disableSubmit = computed(() => isDisableCookButton(pizza));
 
 const addIngredient = (ingredient) => {
-  pizza.ingredients[ingredient]++;
+  pizzaStore.addIngredient(ingredient);
 };
 
 const updateIngredients = (ingredients) => {
-  pizza.ingredients = ingredients;
+  pizzaStore.updateIngredients(ingredients);
 };
 </script>
 <style lang="scss" scoped>
