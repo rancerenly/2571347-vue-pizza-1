@@ -2,28 +2,38 @@
   <label class="input">
     <span class="visually-hidden">Название пиццы</span>
     <input
+      v-model="name"
       type="text"
       name="pizza_name"
       placeholder="Введите название пиццы"
-      :value="modelValue"
-      @input="emit('update:modelValue', $event.target.value)"
     />
   </label>
 </template>
 
 <script setup>
-defineProps({
+import { computed } from "vue";
+const props = defineProps({
   modelValue: {
     type: String,
-    required: true,
+    default: "",
   },
 });
+
 const emit = defineEmits(["update:modelValue"]);
+
+const name = computed({
+  get() {
+    return props.modelValue;
+  },
+
+  set(value) {
+    return emit("update:modelValue", value);
+  },
+});
 </script>
 
 <style lang="scss" scoped>
 @import "@/assets/scss/app.scss";
-// visually-hidden
 .visually-hidden {
   position: absolute;
   overflow: hidden;

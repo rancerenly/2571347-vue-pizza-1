@@ -5,19 +5,18 @@ export const getPizzaPrice = (pizza) => {
   const data = useDataStore();
   const ingredients = mapIngredientQuantities(pizza);
 
-  const getItemPrice = (items, id, defaultValue) => {
-    const item = items.find((item) => item.id === id);
-    return item ? item.price : defaultValue;
-  };
+  const sizeMultiplier =
+    data.sizes.find((item) => item.id === pizza.sizeId)?.multiplier ?? 1;
 
-  const sizeMultiplier = getItemPrice(data.sizes, pizza.sizeId, 1);
-  const doughPrice = getItemPrice(data.doughs, pizza.doughId, 0);
-  const saucePrice = getItemPrice(data.sauces, pizza.sauceId, 0);
+  const doughPrice =
+    data.doughs.find((item) => item.id === pizza.doughId)?.price ?? 0;
 
-  const ingredientsPrice = data.ingredients.reduce((total, ingredient) => {
-    const ingredientQuantity = ingredients[ingredient.id] ?? 0;
-    return total + ingredientQuantity * ingredient.price;
-  }, 0);
+  const saucePrice =
+    data.sauces.find((item) => item.id === pizza.sauceId)?.price ?? 0;
+
+  const ingredientsPrice = data.ingredients
+    .map((item) => ingredients[item.id] * item.price)
+    .reduce((acc, item) => acc + item, 0);
 
   return (doughPrice + saucePrice + ingredientsPrice) * sizeMultiplier;
 };

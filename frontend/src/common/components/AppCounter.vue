@@ -1,5 +1,5 @@
 <template>
-  <div class="counter" :class="{ ingredients__counter: ingredientsCounter }">
+  <div class="counter">
     <button
       type="button"
       class="counter__button counter__button--minus"
@@ -27,7 +27,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 const props = defineProps({
   value: {
     type: Number,
@@ -37,26 +37,19 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  max: {
-    type: Number,
-    default: 3,
-  },
   min: {
     type: Number,
     default: 0,
   },
-  ingredientsCounter: {
-    type: Boolean,
-    default: true,
+  max: {
+    type: Number,
+    default: 100,
   },
 });
 const emit = defineEmits(["update:value"]);
-
 const set = (event) => {
-  const newValue = Number(event.target.value) || 0;
-  emit("update:value", newValue);
+  emit("update:value", Number(event.target.value));
 };
-
 const increment = () => {
   if (props.value < props.max) {
     emit("update:value", props.value + 1);
@@ -71,25 +64,31 @@ const decrement = () => {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/app.scss";
+@import "@/assets/scss/ds-system/ds.scss";
+@import "@/assets/scss/mixins/mixins.scss";
 
-.ingredients__counter {
-  width: 54px;
-  margin-top: 10px;
-  margin-left: 36px;
+.counter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .counter__button {
   $el: &;
   $size_icon: 50%;
+
   position: relative;
+
   display: block;
+
   width: 16px;
   height: 16px;
   margin: 0;
   padding: 0;
+
   cursor: pointer;
   transition: 0.3s;
+
   border: none;
   border-radius: 50%;
   outline: none;
@@ -99,9 +98,12 @@ const decrement = () => {
 
     &::before {
       @include p_center-all;
+
       width: $size_icon;
       height: 2px;
+
       content: "";
+
       border-radius: 2px;
       background-color: $black;
     }
@@ -132,19 +134,25 @@ const decrement = () => {
 
     &::before {
       @include p_center-all;
+
       width: $size_icon;
       height: 2px;
+
       content: "";
+
       border-radius: 2px;
       background-color: $white;
     }
 
     &::after {
       @include p_center-all;
+
       width: $size_icon;
       height: 2px;
+
       content: "";
       transform: translate(-50%, -50%) rotate(90deg);
+
       border-radius: 2px;
       background-color: $white;
     }
@@ -163,6 +171,7 @@ const decrement = () => {
 
     &:disabled {
       cursor: default;
+
       opacity: 0.3;
     }
   }
@@ -182,11 +191,14 @@ const decrement = () => {
 
 .counter__input {
   @include r-s14-h16;
+
   box-sizing: border-box;
   width: 22px;
   margin: 0;
   padding: 0 3px;
+
   text-align: center;
+
   color: $black;
   border: none;
   border-radius: 10px;
@@ -196,11 +208,5 @@ const decrement = () => {
   &:focus {
     box-shadow: inset $shadow-regular;
   }
-}
-.counter {
-  display: flex;
-
-  justify-content: space-between;
-  align-items: center;
 }
 </style>
