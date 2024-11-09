@@ -5,15 +5,20 @@ import { defineStore } from "pinia";
 import doughJSON from "@/mocks/dough.json";
 import saucesJSON from "@/mocks/sauces.json";
 import sizesJSON from "@/mocks/sizes.json";
+import ingredientsJSON from "@/mocks/ingredients.json";
 
 import { Ingredients } from "../common/helpers/IngedientChooserHelper";
+
+import getPrice from "@/common/helpers/price";
 
 import {
   normalizeDough,
   normalizeSauces,
   normalizeSize,
+  normalizeIngredients,
 } from "@/common/helpers/normalize";
 
+const ingredients = ingredientsJSON.map(normalizeIngredients);
 const dougs = doughJSON.map(normalizeDough);
 const sauces = saucesJSON.map(normalizeSauces);
 const sizes = sizesJSON.map(normalizeSize);
@@ -38,5 +43,9 @@ export const usePizzaStore = defineStore("pizzaStore", () => {
     pizza.value.ingredients = ingredients;
   };
 
-  return { pizza, getPizza, addIngredient, updateIngredients };
+  const getPizzaPrice = (pizza) => {
+    return getPrice(pizza, dougs, ingredients, sauces, sizes);
+  };
+
+  return { pizza, getPizza, addIngredient, updateIngredients, getPizzaPrice };
 });
