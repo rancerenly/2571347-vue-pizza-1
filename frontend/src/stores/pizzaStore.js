@@ -1,51 +1,128 @@
-import { ref, computed } from "vue";
-
 import { defineStore } from "pinia";
+import { mapIngredientQuantities } from "@/common/helpers/ingredient-quantities.helper";
+import { getPizzaPrice } from "@/common/helpers/price";
+import { useDataStore } from "@/stores/dataStore";
 
-import doughJSON from "@/mocks/dough.json";
-import saucesJSON from "@/mocks/sauces.json";
-import sizesJSON from "@/mocks/sizes.json";
-import ingredientsJSON from "@/mocks/ingredients.json";
-
-import { Ingredients } from "../common/helpers/IngedientChooserHelper";
-
-import getPrice from "@/common/helpers/price";
-
-import {
-  normalizeDough,
-  normalizeSauces,
-  normalizeSize,
-  normalizeIngredients,
-} from "@/common/helpers/normalize";
-
-const ingredients = ingredientsJSON.map(normalizeIngredients);
-const dougs = doughJSON.map(normalizeDough);
-const sauces = saucesJSON.map(normalizeSauces);
-const sizes = sizesJSON.map(normalizeSize);
-
-const EMPTY_PIZZA = {
-  name: "",
-  dough: dougs[0].value,
-  size: sizes[0].value,
-  sauce: sauces[0].value,
-  ingredients: new Ingredients(),
+const getItemByIdOrDefault = (dataArray, id) => {
+  return dataArray.find((item) => item.id === id) ?? dataArray[0];
 };
 
-export const usePizzaStore = defineStore("pizzaStore", () => {
-  const pizza = ref(EMPTY_PIZZA);
-  const getPizza = computed(() => pizza.value);
+export const usePizzaStore = defineStore("pizzaStore", {
+  state: () => ({
+    index: null,
+    name: "",
+    sauceId: 0,
+    doughId: 0,
+    sizeId: 0,
+    ingredients: [],
+  }),
 
-  const addIngredient = (ingredient) => {
-    pizza.value.ingredients[ingredient]++;
-  };
+  getters: {
+    getDataStore: () => useDataStore(),
 
-  const updateIngredients = (ingredients) => {
-    pizza.value.ingredients = ingredients;
-  };
+    sauce: (state) => getItemByIdOrDefault(useDataStore().sauces, state.sauceId),
+    dough: (state) => getItemByIdOrDefault(useDataStore().doughs, state.doughId),
+    size: (state) => getItemByIdOrDefault(useDataStore().sizes, state.sizeId),
 
-  const getPizzaPrice = (pizza) => {
-    return getPrice(pizza, dougs, ingredients, sauces, sizes);
-  };
+    ingredientsExtended: (state) => {
+      const pizzaIngredientsIds = new Set(
+        state.ingredients.map((i) => i.ingredientId)
+      );
+      const ingredientsMap = new Map(
+        state.ingredients.map((i) => [i.ingredientId, i.quantity])
+      );
 
-  return { pizza, getPizza, addIngredient, updateIngredients, getPizzaPrice };
+      return useDataStore()
+        .ingredients.filter((i) => pizzaIngredientsIds.has(i.id))
+        .map((i) => ({
+          ...i,
+          quantity: ingredientsMap.get(i.id) ?? 0,
+        }));
+    },
+
+    price: (state) => getPizzaPrice(state),
+    ingredientQuantities: (state) => mapIngredientQuantities(state),
+  },
+
+  actions: {
+    setIndex(index) {
+      this.index = index;
+    },
+
+    setName(name) {
+      this.name = name;
+    },
+
+    setSauce(sauceId) {
+      this.sauceId = sauceId;
+    },
+
+    setDough(doughId) {
+      this.doughId = doughId;
+    },
+
+    setSize(sizeId) {
+      this.sizeId = sizeId;
+    },
+
+    setIngredients(ingredients) {
+      this.ingredients = ingredients;
+    },
+
+    addIngredient(ingredientId) {
+      this.ingredients.push({
+        ingredientId,
+        quantity: 1,
+      });
+    },
+
+    incrementIngredientQuantity(ingredientId) {
+      const ingredient = this.ingredients.find(
+        (item) => item.ingredientId === ingredientId
+      );
+
+      if (ingredient) {
+        ingredient.quantity++;
+      } else {
+        this.addIngredient(ingredientId);
+      }
+    },
+
+    setIngredientQuantity(ingredientId, count) {
+      const ingredientIdx = this.ingredients.findIndex(
+        (item) => item.ingredientId === ingredientId
+      );
+
+      if (ingredientIdx === -1) {
+        if (count > 0) {
+          this.addIngredient(ingredientId);
+        }
+        return;
+      }
+
+      if (count === 0) {
+        this.ingredients.splice(ingredientIdx, 1);
+      } else {
+        this.ingredients[ingredientIdx].quantity = count;
+      }
+    },
+
+    removeIngredient(ingredientId) {
+      const index = this.ingredients.findIndex(
+        (item) => item.ingredientId === ingredientId
+      );
+      if (index !== -1) {
+        this.ingredients.splice(index, 1);
+      }
+    },
+
+    loadPizza(pizza) {
+      this.index = pizza.index;
+      this.name = pizza.name;
+      this.sauceId = pizza.sauceId;
+      this.doughId = pizza.doughId;
+      this.sizeId = pizza.sizeId;
+      this.ingredients = pizza.ingredients;
+    },
+  },
 });
