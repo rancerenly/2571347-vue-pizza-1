@@ -64,7 +64,6 @@ import ingredientsJSON from "@/mocks/ingredients.json";
 import saucesJSON from "@/mocks/sauces.json";
 import sizesJSON from "@/mocks/sizes.json";
 
-import getPrice from "@/common/helpers/price";
 import isDisableCookButton from "@/common/helpers/disableButton";
 import { usePizzaStore } from "@/stores/pizzaStore";
 
@@ -78,7 +77,7 @@ const pizzaStore = usePizzaStore();
 const pizza = pizzaStore.getPizza;
 
 const price = computed(() => {
-  return getPrice(pizza, dougs, ingredients, sauces, sizes);
+  return pizzaStore.getPizzaPrice(pizza);
 });
 
 const disableSubmit = computed(() => isDisableCookButton(pizza));
