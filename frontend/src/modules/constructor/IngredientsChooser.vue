@@ -32,7 +32,7 @@
 import AppCounter from "@/common/components/AppCounter.vue";
 import AppDrag from "@/common/components/AppDrag.vue";
 import { MAX_INGREDIENT_COUNT } from "@/common/constants/constants";
-import { Ingredients } from "../../common/helpers/IngedientChooserHelper";
+import { Ingredients } from "../../common/helpers/ingredients-init.helper";
 const props = defineProps({
   modelValue: {
     type: Ingredients,

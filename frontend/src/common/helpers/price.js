@@ -1,14 +1,23 @@
-export const getPrice = (pizza, dougs, allIngredients, sauces, sizes) => {
-  const { dough, size, sauce, ingredients } = pizza;
-  const sizeMultiplier =
-    sizes.find((item) => item.value === size)?.multiplier ?? 1;
-  const doughPrice = dougs.find((item) => item.value === dough)?.price ?? 0;
-  const saucePrice = sauces.find((item) => item.value === sauce)?.price ?? 0;
-  const ingredientsPrice = allIngredients
-    .map((item) => ingredients[item.value] * item.price)
-    .reduce((acc, item) => acc + item, 0);
+import { useDataStore } from "@/stores/dataStore";
+import { mapIngredientQuantities } from "@/common/helpers/ingredient-quantities.helper";
+
+export const getPizzaPrice = (pizza) => {
+  const data = useDataStore();
+  const ingredients = mapIngredientQuantities(pizza);
+
+  const getItemPrice = (items, id, defaultValue) => {
+    const item = items.find((item) => item.id === id);
+    return item ? item.price : defaultValue;
+  };
+
+  const sizeMultiplier = getItemPrice(data.sizes, pizza.sizeId, 1);
+  const doughPrice = getItemPrice(data.doughs, pizza.doughId, 0);
+  const saucePrice = getItemPrice(data.sauces, pizza.sauceId, 0);
+
+  const ingredientsPrice = data.ingredients.reduce((total, ingredient) => {
+    const ingredientQuantity = ingredients[ingredient.id] ?? 0;
+    return total + ingredientQuantity * ingredient.price;
+  }, 0);
 
   return (doughPrice + saucePrice + ingredientsPrice) * sizeMultiplier;
 };
-
-export default getPrice;
