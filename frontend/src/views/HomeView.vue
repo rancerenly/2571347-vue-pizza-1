@@ -3,33 +3,39 @@
     <form action="#" method="post">
       <div class="content__wrapper">
         <h1 class="title title--big">Конструктор пиццы</h1>
-        <DoughChooser v-model="doughtValue" />
-        <DiameterChooser v-model="diameterEnumValue" />
+        <DoughChooser v-model="pizza.dough" :doughs="dougs" />
+        <DiameterChooser v-model="pizza.size" :diameter="sizes" />
         <div class="content__ingredients">
           <div class="sheet">
-            <h2 class="title title--small sheet__title">Выберите ингредиенты</h2>
+            <h2 class="title title--small sheet__title">
+              Выберите ингредиенты
+            </h2>
 
             <div class="sheet__content ingredients">
-              <SauceChooser v-model="sauceValue" />
-              <IngredientsChooser v-model="ingredientsValue" />
+              <SauceChooser v-model="pizza.sauce" :sauces="sauces" />
+              <IngredientsChooser
+                v-model="pizza.ingredients"
+                :ingredients="ingredients"
+                @update:model-value="updateIngredients"
+              />
             </div>
           </div>
         </div>
 
         <div class="content__pizza">
-          <PizzaNameInput v-model="pizzaNameValue" />
-          <PizzaObject />
+          <PizzaNameInput v-model="pizza.name" />
+          <PizzaObject
+            :dough="pizza.dough"
+            :sauce="pizza.sauce"
+            :ingredients="pizza.ingredients"
+            @drop="addIngredient"
+          />
           <div class="content__result">
-            <p>Итого: 0 ₽</p>
-            <button type="button" class="button" disabled>Готовьте!</button>
+            <p>Итого: {{ price }} ₽</p>
+            <button type="button" class="button" :disabled="disableSubmit">
+              Готовьте!
+            </button>
           </div>
-        </div>
-        <div class="content__wrapper__result">
-          <div class="content">Ингедиенты: {{ ingredientsValue }}</div>
-          <div class="content">Тесто: {{ doughtValue }}</div>
-          <div class="content">Диаметр: {{ diameterEnumValue }}</div>
-          <div class="content">Название пиццы: {{ pizzaNameValue }}</div>
-          <div class="content">Соус: {{ sauceValue }}</div>
         </div>
       </div>
     </form>
@@ -37,6 +43,8 @@
 </template>
 
 <script setup>
+import { computed, reactive } from "vue";
+
 import DoughChooser from "../modules/constructor/DoughChooser.vue";
 import DiameterChooser from "../modules/constructor/DiameterChooser.vue";
 import SauceChooser from "../modules/constructor/SauceChooser.vue";
@@ -44,14 +52,48 @@ import IngredientsChooser from "../modules/constructor/IngredientsChooser.vue";
 import PizzaObject from "../modules/constructor/PizzaObject.vue";
 import PizzaNameInput from "../modules/constructor/PizzaNameInput.vue";
 
-import { ref } from "vue";
-import { Ingredients } from "../modules/constructor/IngedientChooserHelper";
+import {
+  normalizeDough,
+  normalizeIngredients,
+  normalizeSauces,
+  normalizeSize,
+} from "@/common/helpers/normalize";
 
-const doughtValue = ref("");
-const diameterEnumValue = ref("");
-const pizzaNameValue = ref("");
-const sauceValue = ref("");
-const ingredientsValue = ref(new Ingredients());
+import doughJSON from "@/mocks/dough.json";
+import ingredientsJSON from "@/mocks/ingredients.json";
+import saucesJSON from "@/mocks/sauces.json";
+import sizesJSON from "@/mocks/sizes.json";
+
+import { Ingredients } from "../modules/constructor/IngedientChooserHelper";
+import getPrice from "@/common/helpers/price";
+import isDisableCookButton from "@/common/helpers/disableButton";
+
+const dougs = doughJSON.map(normalizeDough);
+const ingredients = ingredientsJSON.map(normalizeIngredients);
+const sauces = saucesJSON.map(normalizeSauces);
+const sizes = sizesJSON.map(normalizeSize);
+
+const pizza = reactive({
+  name: "",
+  dough: dougs[0].value,
+  size: sizes[0].value,
+  sauce: sauces[0].value,
+  ingredients: new Ingredients(),
+});
+
+const price = computed(() => {
+  return getPrice(pizza, dougs, ingredients, sauces, sizes);
+});
+
+const disableSubmit = computed(() => isDisableCookButton(pizza));
+
+const addIngredient = (ingredient) => {
+  pizza.ingredients[ingredient]++;
+};
+
+const updateIngredients = (ingredients) => {
+  pizza.ingredients = ingredients;
+};
 </script>
 <style lang="scss" scoped>
 @import "@/assets/scss/app.scss";

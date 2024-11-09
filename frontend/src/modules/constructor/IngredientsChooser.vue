@@ -8,14 +8,20 @@
         :key="ingredient.id"
         class="ingredients__item"
       >
-        <span
-          class="filling"
-          :class="`filling--${ingredientMapper[ingredient.id]}`"
-          >{{ ingredient.name }}</span
+        <AppDrag
+          :data-transfer="ingredient"
+          :draggable="modelValue[ingredient.value] < MAX_INGREDIENT_COUNT"
         >
+          <div class="filling">
+            <img :src="getImage(ingredient.image)" :alt="ingredient.name" />
+            {{ ingredient.name }}
+          </div>
+        </AppDrag>
         <AppCounter
-          :value="modelValue[ingredientMapper[ingredient.id]]"
-          @update:value="updateValue($event, ingredientMapper[ingredient.id])"
+          :value="modelValue[ingredient.value]"
+          :min="0"
+          :max="3"
+          @update:value="updateValue($event, ingredient.value)"
         />
       </li>
     </ul>
@@ -23,24 +29,32 @@
 </template>
 
 <script lang="ts" setup>
-import ingredients from "./../../mocks/ingredients.json";
-import ingredientMapper from "../../common/data/ingredients";
-import AppCounter from "../../common/components/AppCounter.vue";
-
+import AppCounter from "@/common/components/AppCounter.vue";
+import AppDrag from "@/common/components/AppDrag.vue";
+import { MAX_INGREDIENT_COUNT } from "@/common/constants/constants";
 import { Ingredients } from "./IngedientChooserHelper";
 const props = defineProps({
   modelValue: {
     type: Ingredients,
     required: true,
   },
+  ingredients: {
+    type: Array,
+    default: () => [],
+  },
 });
 const emit = defineEmits(["update:modelValue"]);
+
 const updateValue = (newValue, ingredientName) => {
   const updatedIngredients = new Ingredients({
     ...props.modelValue,
     [ingredientName]: newValue,
   });
   emit("update:modelValue", updatedIngredients);
+};
+
+const getImage = (image) => {
+  return new URL(`../../assets/img/${image}`, import.meta.url).href;
 };
 </script>
 
@@ -76,23 +90,30 @@ const updateValue = (newValue, ingredientName) => {
   margin-left: 36px;
 }
 // filling
+
 .filling {
   @include r-s14-h16;
+
   position: relative;
+
   display: block;
+
   padding-left: 36px;
-  &::before {
+
+  img {
     @include p_center-v;
+
     display: block;
+
     width: 32px;
     height: 32px;
-    content: "";
+
+    box-sizing: border-box;
+    padding: 4px;
+
     border-radius: 50%;
-    background-color: $white;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 80% 80%;
   }
+
   &--tomatoes::before {
     background-image: url("@/assets/img/filling/tomatoes.svg");
   }
