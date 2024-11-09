@@ -22,7 +22,7 @@
 <script setup>
 import { computed } from "vue";
 import AppDrop from "@/common/components/AppDrop.vue";
-import { Ingredients } from "./IngedientChooserHelper";
+import { Ingredients } from "../../common/helpers/IngedientChooserHelper";
 
 const TWO_INGREDIENTS = 2;
 const THREE_INGREDIENTS = 3;
