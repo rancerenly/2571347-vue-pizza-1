@@ -30,5 +30,33 @@ export const useProfileStore = defineStore("profileStore", {
       return state.phone;
     },
   },
-  actions: {},
+  actions: {
+    // пока нет логики с авторизацией в систему
+    // eslint-disable-next-line no-unused-vars
+    login(email, password) {},
+    logout() {
+      this.id = 0;
+      this.name = "";
+      this.email = "";
+      this.avatar = "";
+      this.phone = "";
+      this.orders = [];
+      this.addresses = [];
+    },
+    addOrder(order) {
+      this.orders.push(order);
+    },
+    deleteOrder(id) {
+      this.orders = this.orders.filter((order) => order.id !== id);
+    },
+    clearOrders() {
+      this.orders = [];
+    },
+    addAddress(address) {
+      this.addresses.push(address);
+    },
+    deleteAddress(id) {
+      this.addresses = this.addresses.filter((address) => address.id !== id);
+    },
+  },
 });
