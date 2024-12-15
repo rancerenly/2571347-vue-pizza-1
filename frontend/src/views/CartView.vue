@@ -19,53 +19,14 @@
         </div>
 
         <ul v-else class="cart-list sheet">
-          <li
-            v-for="(pizza, i) in cartStore.getPizzasExtended"
-            :key="i"
-            class="cart-list__item"
-          >
-            <div class="product cart-list__product">
-              <img
-                :src="getImage('product.svg')"
-                class="product__img"
-                width="56"
-                height="56"
-                :alt="pizza.name"
-              />
-              <div class="product__text">
-                <h2>{{ pizza.name }}</h2>
-                <ul>
-                  <li>{{ pizza.size.name }}, {{ pizza.dough.name }} тесто</li>
-                  <li>Соус: {{ pizza.sauce.name }}</li>
-                  <li>
-                    Начинка:
-                    {{ pizza.ingredients.map((i) => i.name).join(", ") }}
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <AppCounter
-              class="cart-list__counter"
-              :value="pizza.quantity"
-              accent
-              @update:value="cartStore.setPizzaQuantity(i, $event)"
-            />
-
-            <div class="cart-list__price">
-              <b>{{ pizza.price }} ₽</b>
-            </div>
-
-            <div class="cart-list__button">
-              <button
-                type="button"
-                class="cart-list__edit"
-                @click="editPizza(i)"
-              >
-                Изменить
-              </button>
-            </div>
-          </li>
+          <CartListItem
+              v-for="(pizza, i) in cartStore.getPizzasExtended"
+              :key="i"
+              :pizza="pizza"
+              :index="i"
+              @update:quantity="cartStore.setPizzaQuantity"
+              @editPizza="editPizza"
+          />
         </ul>
 
         <div class="cart__additional">
@@ -198,7 +159,8 @@ import { computed, ref } from "vue";
 import { useProfileStore } from "@/stores/profileStore";
 import { MAX_INGREDIENT_COUNT } from "@/common/constants/constants";
 import { useAuthStore } from "@/stores/authStore";
-import {getImage} from "@/common/helpers/get-image";
+import { getImage } from "@/common/helpers/get-image";
+import CartListItem from "@/modules/cart/CartListItem.vue";
 
 const cartStore = useCartStore();
 const pizzaStore = usePizzaStore();
