@@ -1,4 +1,4 @@
-import {CrudService} from "@/services/crud.service";
+import { CrudService } from "@/services/crud.service";
 
 export class SauceResource extends CrudService {
   constructor() {

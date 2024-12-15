@@ -1,4 +1,4 @@
-import {CrudService} from "@/services/crud.service";
+import { CrudService } from "@/services/crud.service";
 
 export class AddressResource extends CrudService {
   constructor() {

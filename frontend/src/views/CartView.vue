@@ -7,25 +7,25 @@
         </div>
 
         <div
-            v-if="cartStore.getPizzasExtended.length === 0"
-            class="sheet cart__empty"
+          v-if="cartStore.getPizzasExtended.length === 0"
+          class="sheet cart__empty"
         >
           <p>В корзине нет ни одного товара</p>
         </div>
 
         <ul v-else class="cart-list sheet">
           <li
-              v-for="(pizza, i) in cartStore.getPizzasExtended"
-              :key="i"
-              class="cart-list__item"
+            v-for="(pizza, i) in cartStore.getPizzasExtended"
+            :key="i"
+            class="cart-list__item"
           >
             <div class="product cart-list__product">
               <img
-                  :src="getImage('product.svg')"
-                  class="product__img"
-                  width="56"
-                  height="56"
-                  :alt="pizza.name"
+                :src="getImage('product.svg')"
+                class="product__img"
+                width="56"
+                height="56"
+                :alt="pizza.name"
               />
               <div class="product__text">
                 <h2>{{ pizza.name }}</h2>
@@ -41,10 +41,10 @@
             </div>
 
             <AppCounter
-                class="cart-list__counter"
-                :value="pizza.quantity"
-                accent
-                @update:value="cartStore.setPizzaQuantity(i, $event)"
+              class="cart-list__counter"
+              :value="pizza.quantity"
+              accent
+              @update:value="cartStore.setPizzaQuantity(i, $event)"
             />
 
             <div class="cart-list__price">
@@ -53,9 +53,9 @@
 
             <div class="cart-list__button">
               <button
-                  type="button"
-                  class="cart-list__edit"
-                  @click="editPizza(i)"
+                type="button"
+                class="cart-list__edit"
+                @click="editPizza(i)"
               >
                 Изменить
               </button>
@@ -66,28 +66,28 @@
         <div class="cart__additional">
           <ul class="additional-list">
             <li
-                v-for="misc in cartStore.miscExtended"
-                :key="misc.id"
-                class="additional-list__item sheet"
+              v-for="misc in cartStore.miscExtended"
+              :key="misc.id"
+              class="additional-list__item sheet"
             >
               <p class="additional-list__description">
                 <img
-                    :src="getImage(`${misc.image}.svg`)"
-                    width="39"
-                    height="60"
-                    alt="Coca-Cola 0,5 литра"
+                  :src="getImage(`${misc.image}.svg`)"
+                  width="39"
+                  height="60"
+                  alt="Coca-Cola 0,5 литра"
                 />
                 <span>{{ misc.name }}</span>
               </p>
 
               <div class="additional-list__wrapper">
                 <AppCounter
-                    class="additional-list__counter"
-                    :value="misc.quantity"
-                    accent
-                    :min="0"
-                    :max="MAX_INGREDIENT_COUNT"
-                    @update:value="cartStore.setMiscQuantity(misc.id, $event)"
+                  class="additional-list__counter"
+                  :value="misc.quantity"
+                  accent
+                  :min="0"
+                  :max="MAX_INGREDIENT_COUNT"
+                  @update:value="cartStore.setMiscQuantity(misc.id, $event)"
                 />
 
                 <div class="additional-list__price">
@@ -104,15 +104,15 @@
               <span class="cart-form__label">Получение заказа:</span>
 
               <select
-                  name="test"
-                  class="select"
-                  @input="deliveryOption = $event.target.value"
+                name="test"
+                class="select"
+                @input="deliveryOption = $event.target.value"
               >
                 <option :value="-1">Новый адрес</option>
                 <option
-                    v-for="address in profileStore.addresses"
-                    :key="address.id"
-                    :value="address.id"
+                  v-for="address in profileStore.addresses"
+                  :key="address.id"
+                  :value="address.id"
                 >
                   {{ address.name }}
                 </option>
@@ -122,10 +122,10 @@
             <label class="input input--big-label">
               <span>Контактный телефон:</span>
               <input
-                  v-model="phone"
-                  type="text"
-                  name="tel"
-                  placeholder="+7 999-999-99-99"
+                v-model="phone"
+                type="text"
+                name="tel"
+                placeholder="+7 999-999-99-99"
               />
             </label>
 
@@ -161,8 +161,8 @@
     <section class="footer">
       <div class="footer__more">
         <router-link
-            :to="{ name: 'home' }"
-            class="button button--border button--arrow"
+          :to="{ name: 'home' }"
+          class="button button--border button--arrow"
         >
           Хочу еще одну
         </router-link>
@@ -190,7 +190,7 @@ import { usePizzaStore } from "@/stores/pizzaStore";
 import { useRouter } from "vue-router";
 import { computed, ref } from "vue";
 import { useProfileStore } from "@/stores/profileStore";
-import {MAX_INGREDIENT_COUNT} from "@/common/constants/constants";
+import { MAX_INGREDIENT_COUNT } from "@/common/constants/constants";
 
 const getImage = (image) => {
   return new URL(`../assets/img/${image}`, import.meta.url).href;
@@ -255,7 +255,6 @@ const editPizza = async (index) => {
   });
   await router.push({ name: "home" });
 };
-
 </script>
 
 <style lang="scss">

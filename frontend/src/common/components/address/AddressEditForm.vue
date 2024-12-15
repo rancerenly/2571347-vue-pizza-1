@@ -9,11 +9,11 @@
         <label class="input">
           <span>Название адреса*</span>
           <input
-              v-model="name"
-              type="text"
-              name="addr-name"
-              placeholder="Введите название адреса"
-              required
+            v-model="name"
+            type="text"
+            name="addr-name"
+            placeholder="Введите название адреса"
+            required
           />
         </label>
       </div>
@@ -21,11 +21,11 @@
         <label class="input">
           <span>Улица*</span>
           <input
-              v-model="street"
-              type="text"
-              name="addr-street"
-              placeholder="Введите название улицы"
-              required
+            v-model="street"
+            type="text"
+            name="addr-street"
+            placeholder="Введите название улицы"
+            required
           />
         </label>
       </div>
@@ -33,11 +33,11 @@
         <label class="input">
           <span>Дом*</span>
           <input
-              v-model="building"
-              type="text"
-              name="addr-house"
-              placeholder="Введите номер дома"
-              required
+            v-model="building"
+            type="text"
+            name="addr-house"
+            placeholder="Введите номер дома"
+            required
           />
         </label>
       </div>
@@ -45,10 +45,10 @@
         <label class="input">
           <span>Квартира</span>
           <input
-              v-model="flat"
-              type="text"
-              name="addr-apartment"
-              placeholder="Введите № квартиры"
+            v-model="flat"
+            type="text"
+            name="addr-apartment"
+            placeholder="Введите № квартиры"
           />
         </label>
       </div>
@@ -56,10 +56,10 @@
         <label class="input">
           <span>Комментарий</span>
           <input
-              v-model="comment"
-              type="text"
-              name="addr-comment"
-              placeholder="Введите комментарий"
+            v-model="comment"
+            type="text"
+            name="addr-comment"
+            placeholder="Введите комментарий"
           />
         </label>
       </div>
@@ -67,9 +67,9 @@
 
     <div class="address-form__buttons">
       <button
-          type="button"
-          class="button button--transparent"
-          @click="emit('delete')"
+        type="button"
+        class="button button--transparent"
+        @click="emit('delete')"
       >
         Удалить
       </button>
