@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { DATA_TRANSFER_PAYLOAD } from "@/common/constants";
+import { DATA_TRANSFER_PAYLOAD } from "@/common/constants/constants";
 
 const emit = defineEmits(["drop"]);
 
