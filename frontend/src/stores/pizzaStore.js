@@ -20,16 +20,18 @@ export const usePizzaStore = defineStore("pizzaStore", {
   getters: {
     getDataStore: () => useDataStore(),
 
-    sauce: (state) => getItemByIdOrDefault(useDataStore().sauces, state.sauceId),
-    dough: (state) => getItemByIdOrDefault(useDataStore().doughs, state.doughId),
+    sauce: (state) =>
+      getItemByIdOrDefault(useDataStore().sauces, state.sauceId),
+    dough: (state) =>
+      getItemByIdOrDefault(useDataStore().doughs, state.doughId),
     size: (state) => getItemByIdOrDefault(useDataStore().sizes, state.sizeId),
 
     ingredientsExtended: (state) => {
       const pizzaIngredientsIds = new Set(
-        state.ingredients.map((i) => i.ingredientId)
+        state.ingredients.map((i) => i.ingredientId),
       );
       const ingredientsMap = new Map(
-        state.ingredients.map((i) => [i.ingredientId, i.quantity])
+        state.ingredients.map((i) => [i.ingredientId, i.quantity]),
       );
 
       return useDataStore()
@@ -78,7 +80,7 @@ export const usePizzaStore = defineStore("pizzaStore", {
 
     incrementIngredientQuantity(ingredientId) {
       const ingredient = this.ingredients.find(
-        (item) => item.ingredientId === ingredientId
+        (item) => item.ingredientId === ingredientId,
       );
 
       if (ingredient) {
@@ -90,7 +92,7 @@ export const usePizzaStore = defineStore("pizzaStore", {
 
     setIngredientQuantity(ingredientId, count) {
       const ingredientIdx = this.ingredients.findIndex(
-        (item) => item.ingredientId === ingredientId
+        (item) => item.ingredientId === ingredientId,
       );
 
       if (ingredientIdx === -1) {
@@ -109,7 +111,7 @@ export const usePizzaStore = defineStore("pizzaStore", {
 
     removeIngredient(ingredientId) {
       const index = this.ingredients.findIndex(
-        (item) => item.ingredientId === ingredientId
+        (item) => item.ingredientId === ingredientId,
       );
       if (index !== -1) {
         this.ingredients.splice(index, 1);

@@ -1,3 +1,5 @@
+import {isLoggedIn} from "@/middlewares/is-logging";
+
 const routes = [
   {
     path: "/",
@@ -18,10 +20,16 @@ const routes = [
     meta: { layout: "AppLayoutDefault" },
   },
   {
+    path: "/success",
+    name: "success",
+    component: () => import("@/views/SuccessView.vue"),
+    meta: { layout: "SimpleLayout" },
+  },
+  {
     path: "/user",
     name: "user",
     component: () => import("@/views/UserView.vue"),
-    meta: { layout: "AppLayoutDefault" },
+    meta: { layout: "AppLayoutDefault",   midllewares: [isLoggedIn] },
     children: [
       {
         path: "orders",

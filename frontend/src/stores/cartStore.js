@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
-import { getPizzaPrice } from "@/common/helpers/price";
 import { useDataStore } from "@/stores/dataStore";
-import { getElementById } from "@/common/helpers/get-element-by-id.helper";
+import { getPizzaPrice } from "@/common/helpers/price";
 
 export const useCartStore = defineStore("cartStore", {
   state: () => ({
@@ -17,77 +16,62 @@ export const useCartStore = defineStore("cartStore", {
   }),
   getters: {
     getPizzasExtended: (state) => {
-      const { doughs, sizes, sauces, ingredients } = useDataStore();
+      const data = useDataStore();
 
-      const getPizzaData = (pizza) => {
-        const {
-          name,
-          quantity,
-          doughId,
-          sizeId,
-          sauceId,
-          ingredients: pizzaIngredients,
-        } = pizza;
-        const selectedIngredients = new Set(
-          pizzaIngredients.map((i) => i.ingredientId),
+      return state.pizzas.map((pizza) => {
+        const pizzaIngredientsIds = pizza.ingredients.map(
+          (i) => i.ingredientId,
         );
 
         return {
-          name,
-          quantity,
-          dough: getElementById(doughs, doughId),
-          size: getElementById(sizes, sizeId),
-          sauce: getElementById(sauces, sauceId),
-          ingredients: ingredients.filter((i) => selectedIngredients.has(i.id)),
+          name: pizza.name,
+          quantity: pizza.quantity,
+          dough: data.doughs.find((i) => i.id === pizza.doughId),
+          size: data.sizes.find((i) => i.id === pizza.sizeId),
+          sauce: data.sauces.find((i) => i.id === pizza.sauceId),
+          ingredients: data.ingredients.filter((i) =>
+            pizzaIngredientsIds.includes(i.id),
+          ),
           price: getPizzaPrice(pizza),
         };
-      };
-
-      return state.pizzas.map(getPizzaData);
+      });
     },
     miscExtended: (state) => {
-      const { misc } = useDataStore();
+      const data = useDataStore();
 
-      const getQuantity = (id) =>
-        state.misc.find((item) => item.id === id)?.quantity ?? 0;
-
-      return misc.map((item) => ({
-        ...item,
-        quantity: getQuantity(item.id),
-      }));
+      return data.misc.map((misc) => {
+        return {
+          ...misc,
+          quantity: state.misc.find((i) => i.miscId === misc.id)?.quantity ?? 0,
+        };
+      });
     },
     total: (state) => {
-      const calculateTotal = (items) =>
-        items.reduce((acc, { quantity, price }) => acc + quantity * price, 0);
+      const pizzaPrices = state.getPizzasExtended
+        .map((item) => item.quantity * item.price)
+        .reduce((acc, val) => acc + val, 0);
 
-      return (
-        calculateTotal(state.pizzasExtended) +
-        calculateTotal(state.miscExtended)
-      );
+      const miscPrices = state.miscExtended
+        .map((item) => item.quantity * item.price)
+        .reduce((acc, val) => acc + val, 0);
+
+      return pizzaPrices + miscPrices;
     },
   },
   actions: {
     savePizza(pizza) {
       const { index, ...pizzaData } = pizza;
 
-      const updatePizza = (i) => {
-        this.pizzas[i] = {
-          ...this.pizzas[i],
+      if (index !== null) {
+        this.pizzas[index] = {
+          quantity: this.pizzas[index].quantity,
           ...pizzaData,
         };
-      };
-
-      const addNewPizza = () => {
+      } else {
         this.pizzas.push({
           quantity: 1,
           ...pizzaData,
         });
-      };
-
-      if (index !== null && index >= 0) {
-        updatePizza(index);
-      } else {
-        addNewPizza();
       }
     },
     setPizzaQuantity(index, count) {
@@ -95,31 +79,25 @@ export const useCartStore = defineStore("cartStore", {
         this.pizzas[index].quantity = count;
       }
     },
-
     setMiscQuantity(miscId, count) {
       const miscIdx = this.misc.findIndex((item) => item.miscId === miscId);
 
-      const addMiscItem = () => {
-        this.misc.push({ miscId, quantity: 1 });
-      };
-
-      const removeMiscItem = () => {
-        this.misc.splice(miscIdx, 1);
-      };
-
-      const updateMiscQuantity = () => {
-        this.misc[miscIdx].quantity = count;
-      };
-
-      if (miscIdx === -1) {
-        if (count > 0) addMiscItem();
-      } else {
-        if (count === 0) {
-          removeMiscItem();
-        } else {
-          updateMiscQuantity();
-        }
+      if (miscIdx === -1 && count > 0) {
+        this.misc.push({
+          miscId,
+          quantity: 1,
+        });
+        return;
+      } else if (miscIdx === -1) {
+        return;
       }
+
+      if (count === 0) {
+        this.misc.splice(miscIdx, 1);
+        return;
+      }
+
+      this.misc[miscIdx].quantity = count;
     },
     setPhone(phone) {
       this.phone = phone;

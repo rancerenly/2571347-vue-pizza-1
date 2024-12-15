@@ -21,7 +21,6 @@ watch(
         layout.value = AppLayoutDefault;
       }
     } catch (e) {
-      console.log("errorr");
       console.error(
         "Динамический шаблон не найден. Установлен шаблон по-умолчанию.",
         e,
