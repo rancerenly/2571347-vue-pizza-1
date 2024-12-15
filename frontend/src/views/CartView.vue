@@ -31,36 +31,12 @@
 
         <div class="cart__additional">
           <ul class="additional-list">
-            <li
-              v-for="misc in cartStore.miscExtended"
-              :key="misc.id"
-              class="additional-list__item sheet"
-            >
-              <p class="additional-list__description">
-                <img
-                  :src="getImage(`${misc.image}`)"
-                  width="39"
-                  height="60"
-                  alt="Coca-Cola 0,5 литра"
-                />
-                <span>{{ misc.name }}</span>
-              </p>
-
-              <div class="additional-list__wrapper">
-                <AppCounter
-                  class="additional-list__counter"
-                  :value="misc.quantity"
-                  accent
-                  :min="0"
-                  :max="MAX_INGREDIENT_COUNT"
-                  @update:value="cartStore.setMiscQuantity(misc.id, $event)"
-                />
-
-                <div class="additional-list__price">
-                  <b>× {{ misc.price }} ₽</b>
-                </div>
-              </div>
-            </li>
+            <AdditionalListItem
+                v-for="misc in cartStore.miscExtended"
+                :key="misc.id"
+                :misc="misc"
+                @update:quantity="onMiscQuantityUpdate"
+            />
           </ul>
         </div>
 
@@ -151,16 +127,14 @@
 </template>
 
 <script setup>
-import AppCounter from "@/common/components/AppCounter.vue";
 import { useCartStore } from "@/stores/cartStore";
 import { usePizzaStore } from "@/stores/pizzaStore";
 import { useRouter } from "vue-router";
 import { computed, ref } from "vue";
 import { useProfileStore } from "@/stores/profileStore";
-import { MAX_INGREDIENT_COUNT } from "@/common/constants/constants";
 import { useAuthStore } from "@/stores/authStore";
-import { getImage } from "@/common/helpers/get-image";
 import CartListItem from "@/modules/cart/CartListItem.vue";
+import AdditionalListItem from "@/modules/cart/AdditionalListItem.vue";
 
 const cartStore = useCartStore();
 const pizzaStore = usePizzaStore();
@@ -246,9 +220,13 @@ const submit = async () => {
     cartStore.resetAddress();
   }
 };
+
+const onMiscQuantityUpdate = (miscId, newQuantity) => {
+  cartStore.setMiscQuantity(miscId, newQuantity);
+};
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "@/assets/scss/ds-system/ds.scss";
 @import "@/assets/scss/mixins/mixins.scss";
 
@@ -280,7 +258,6 @@ const submit = async () => {
 .cart-form__select {
   display: flex;
   align-items: center;
-
   margin-right: auto;
 
   span {
@@ -512,6 +489,7 @@ const submit = async () => {
   @include r-s16-h19;
 
   display: block;
+  width: 148px;
 
   margin: 0;
   padding: 8px 30px 8px 16px;
