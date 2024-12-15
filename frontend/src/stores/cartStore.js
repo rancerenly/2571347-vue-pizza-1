@@ -1,6 +1,8 @@
-import { defineStore } from "pinia";
-import { useDataStore } from "@/stores/dataStore";
 import { getPizzaPrice } from "@/common/helpers/price";
+import { useAuthStore } from "@/stores/authStore";
+import { useDataStore } from "@/stores/dataStore";
+import { defineStore } from "pinia";
+import resources from "@/services/resources";
 
 export const useCartStore = defineStore("cartStore", {
   state: () => ({
@@ -116,7 +118,55 @@ export const useCartStore = defineStore("cartStore", {
       this.address.flat = flat;
     },
     setComment(comment) {
-      this.address.street = comment;
+      this.address.comment = comment;
+    },
+    resetAddress() {
+      this.address = {
+        street: "",
+        building: "",
+        flat: "",
+        comment: "",
+      };
+    },
+    unsetAddress() {
+      this.address = null;
+    },
+    reset() {
+      this.phone = "";
+      this.address = {
+        street: "",
+        building: "",
+        flat: "",
+        comment: "",
+      };
+      this.pizzas = [];
+      this.misc = [];
+    },
+    load(order) {
+      this.phone = order.phone;
+      this.pizzas =
+        order?.orderPizzas?.map((pizza) => ({
+          name: pizza.name,
+          sauceId: pizza.sauce.id,
+          doughId: pizza.dough.id,
+          sizeId: pizza.size.id,
+          quantity: pizza.quantity,
+          ingredients: pizza.ingredients.map((ingredient) => ({
+            ingredientId: ingredient.id,
+            quantity: ingredient.quantity,
+          })),
+        })) ?? [];
+    },
+    async publishOrder() {
+      const authStore = useAuthStore();
+
+      return await resources.order.createOrder({
+        userId: authStore.user?.id ?? null,
+        phone: this.phone,
+        address: this.address,
+        pizzas: this.pizzas,
+        misc: this.misc,
+      });
     },
   },
 });

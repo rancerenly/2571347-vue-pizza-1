@@ -1,5 +1,10 @@
 <template>
-  <form class="layout-form" @submit.prevent="submit">
+  <form
+    action="test.html"
+    method="post"
+    class="layout-form"
+    @submit.prevent="submit"
+  >
     <main class="content cart">
       <div class="container">
         <div class="cart__title">
@@ -72,7 +77,7 @@
             >
               <p class="additional-list__description">
                 <img
-                  :src="getImage(`${misc.image}.svg`)"
+                  :src="getImage(`${misc.image}`)"
                   width="39"
                   height="60"
                   alt="Coca-Cola 0,5 литра"
@@ -108,6 +113,7 @@
                 class="select"
                 @input="deliveryOption = $event.target.value"
               >
+                <option :value="-2">Заберу сам</option>
                 <option :value="-1">Новый адрес</option>
                 <option
                   v-for="address in profileStore.addresses"
@@ -191,26 +197,32 @@ import { useRouter } from "vue-router";
 import { computed, ref } from "vue";
 import { useProfileStore } from "@/stores/profileStore";
 import { MAX_INGREDIENT_COUNT } from "@/common/constants/constants";
-
-const getImage = (image) => {
-  return new URL(`../assets/img/${image}`, import.meta.url).href;
-};
+import { useAuthStore } from "@/stores/authStore";
+import {getImage} from "@/common/helpers/get-image";
 
 const cartStore = useCartStore();
 const pizzaStore = usePizzaStore();
 const profileStore = useProfileStore();
+const authStore = useAuthStore();
 
 const router = useRouter();
-
-const deliveryOption = ref(-1);
-const isNewAddress = computed(() => deliveryOption.value === -1);
-
-const submit = async () => {
-  if (deliveryOption.value === "home") {
-    cartStore.setAddress(profileStore.addresses[0]);
+const deliveryOption = ref(-2);
+const isNewAddress = computed(() => Number(deliveryOption.value) === -1);
+const isNoAddress = computed(() => Number(deliveryOption.value) === -2);
+const deliveryAddress = computed(() => {
+  if (isNewAddress.value) {
+    return null;
+  } else {
+    const existedAddress =
+      profileStore.addresses.find(
+        (addr) => addr.id === Number(deliveryOption.value)
+      ) ?? null;
+    if (existedAddress) {
+      cartStore.setAddress(existedAddress);
+    }
+    return existedAddress;
   }
-  await router.push({ name: "success" });
-};
+});
 
 const phone = computed({
   get() {
@@ -254,6 +266,23 @@ const editPizza = async (index) => {
     ...cartStore.pizzas[index],
   });
   await router.push({ name: "home" });
+};
+
+const submit = async () => {
+  if (isNoAddress.value) {
+    cartStore.unsetAddress();
+  } else if (!isNewAddress.value) {
+    cartStore.setAddress(deliveryAddress.value);
+  }
+
+  const res = await cartStore.publishOrder();
+  if (res.__state === "success") {
+    authStore.isAuthenticated && (await profileStore.loadOrders());
+    await router.push({ name: "success" });
+    cartStore.$reset();
+  } else if (isNoAddress.value) {
+    cartStore.resetAddress();
+  }
 };
 </script>
 

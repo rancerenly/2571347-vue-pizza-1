@@ -11,45 +11,56 @@
       </router-link>
     </div>
     <div class="header__cart">
-      <router-link :to="{ name: 'cart' }"
-        >{{ cartStore.getPrice }} ₽</router-link
-      >
+      <router-link :to="{ name: 'cart' }">{{ cartStore.total }} ₽</router-link>
     </div>
-
-    <div v-if="authStore.isAuthenticated" class="header__user">
-      <router-link :to="{ name: 'user' }">
+    <div class="header__user">
+      <router-link v-if="authStore.isAuthenticated" :to="{ name: 'profile' }">
         <picture>
+          <source
+            type="image/webp"
+            srcset="
+              @/assets/img/users/user5.webp    1x,
+              @/assets/img/users/user5@2x.webp 2x
+            "
+          />
           <img
-            :src="getPublicImage(authStore.getWhoAmI.avatar)"
-            :alt="authStore.getWhoAmI.name"
+            src="@/assets/img/users/user5.jpg"
+            srcset="@/assets/img/users/user5@2x.jpg"
+            :alt="authStore.user.name"
             width="32"
             height="32"
           />
         </picture>
-        <span>{{ authStore.getWhoAmI.name }}</span>
+        <span>{{ authStore.user.name }}</span>
       </router-link>
-      <router-link
-        :to="{ name: 'home' }"
-        class="header__logout"
-        @click="authStore.logout"
-        ><span>Выйти</span></router-link
-      >
-    </div>
 
-    <div v-else class="header__user">
-      <router-link class="header__login" :to="{ name: 'login' }"
-        ><span>Войти</span></router-link
+      <div
+        v-if="authStore.isAuthenticated"
+        class="header__logout"
+        @click="logout"
       >
+        <span>Выйти</span>
+      </div>
+      <router-link v-else :to="{ name: 'login' }" class="header__login">
+        <span>Войти</span>
+      </router-link>
     </div>
   </header>
 </template>
 
 <script setup>
-import { useCartStore } from "@/stores/index";
 import { useAuthStore } from "@/stores/authStore";
+import { useRouter } from "vue-router";
+import { useCartStore } from "@/stores/cartStore";
 
-const cartStore = useCartStore();
 const authStore = useAuthStore();
+const cartStore = useCartStore();
+const router = useRouter();
+
+const logout = async () => {
+  await authStore.logout();
+  await router.replace({ name: "login" });
+};
 </script>
 
 <style lang="scss" scoped>

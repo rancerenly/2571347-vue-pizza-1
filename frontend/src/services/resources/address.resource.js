@@ -2,7 +2,7 @@ import { CrudService } from "@/services/crud.service";
 
 export class AddressResource extends CrudService {
   constructor() {
-    super("/api/addresses");
+    super("addresses");
   }
 
   getAddresses() {

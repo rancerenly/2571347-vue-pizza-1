@@ -1,8 +1,8 @@
 import {isLoggedIn} from "@/middlewares/is-logging";
 
-const routes = [
+export const routes = [
   {
-    path: "/",
+    path: "",
     name: "home",
     component: () => import("../views/HomeView.vue"),
     meta: { layout: "AppLayoutDefault" },

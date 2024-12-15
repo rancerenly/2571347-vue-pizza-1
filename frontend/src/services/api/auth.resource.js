@@ -14,7 +14,6 @@ export class AuthService extends ApiService {
   }
 
   login(params) {
-    console.log('path', this.path);
     return this.$post(`${this.path}/login`, params);
   }
 

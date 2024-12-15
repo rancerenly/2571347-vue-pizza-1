@@ -34,6 +34,7 @@
 import AppDrag from "@/common/components/AppDrag.vue";
 import { MAX_INGREDIENT_COUNT } from "@/common/constants/constants";
 import AppCounter from "@/common/components/AppCounter.vue";
+import {getImage} from "@/common/helpers/get-image";
 
 defineProps({
   values: {
@@ -54,10 +55,6 @@ const setValue = (ingredient, count) => {
 
 const updateValue = (ingredient, count) => {
   setValue(ingredient, Math.min(MAX_INGREDIENT_COUNT, Number(count)));
-};
-
-const getImage = (image) => {
-  return new URL(`../../assets/img/${image}`, import.meta.url).href;
 };
 </script>
 

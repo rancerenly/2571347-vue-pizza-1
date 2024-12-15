@@ -15,7 +15,7 @@ const rules = {
       const normalizedValue = String(data).toLowerCase();
       return data ? EMAIL_REGEX.test(normalizedValue) : true;
     },
-    message: "Электроная почта имеет неверный формат",
+    message: "Электронная почта имеет неверный формат",
   },
 };
 
