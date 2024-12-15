@@ -32,7 +32,7 @@
 
 <script setup>
 import AppDrag from "@/common/components/AppDrag.vue";
-import { MAX_INGREDIENT_COUNT } from "@/common/constants";
+import { MAX_INGREDIENT_COUNT } from "@/common/constants/constants";
 import AppCounter from "@/common/components/AppCounter.vue";
 
 defineProps({
