@@ -7,7 +7,7 @@
       <h1 class="title title--small">Авторизуйтесь на сайте</h1>
     </div>
     <form action="test.html" method="post" @submit.prevent="login">
-      <div class="sign-form__input">
+      <div class="sign-form__input" :class="{'shake': validations.email.error || errorMessage}">
         <label class="input">
           <span>E-mail</span>
           <input
@@ -22,7 +22,7 @@
         </div>
       </div>
 
-      <div class="sign-form__input">
+      <div class="sign-form__input" :class="{'shake': validations.password.error || errorMessage}">
         <label class="input">
           <span>Пароль</span>
           <input
@@ -124,10 +124,47 @@ const login = async () => {
   background: $white url("@/assets/img/popup.svg") no-repeat center top;
   box-shadow: $shadow-light;
 
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+
   button {
     margin: 0 auto;
     padding: 16px 14px;
+    transition: transform 0.3s ease-in-out;
   }
+
+  button:hover {
+    transform: scale(1.1);
+  }
+}
+
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-5px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.sign-form__input.shake {
+  animation: shake 0.5s ease-in-out;
 }
 
 .sign-form__title {
