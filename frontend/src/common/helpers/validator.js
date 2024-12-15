@@ -19,7 +19,7 @@ const rules = {
   },
 };
 
-const validate = (value, appliedRules) => {
+export const validate = (value, appliedRules) => {
   let error = "";
   appliedRules.forEach((appliedRule) => {
     if (!rules[appliedRule]) {
