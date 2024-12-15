@@ -3,7 +3,7 @@
     <div class="sheet">
       <h2 class="title title--small sheet__title">Выберите размер</h2>
 
-      <div class="sheet__content">
+      <div class="sheet__content diameter">
         <label
           v-for="sizeType in items"
           :key="sizeType.id"

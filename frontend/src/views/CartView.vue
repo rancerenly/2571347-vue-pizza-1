@@ -1,5 +1,10 @@
 <template>
-  <form class="layout-form" @submit.prevent="submit">
+  <form
+    action="test.html"
+    method="post"
+    class="layout-form"
+    @submit.prevent="submit"
+  >
     <main class="content cart">
       <div class="container">
         <div class="cart__title">
@@ -14,87 +19,24 @@
         </div>
 
         <ul v-else class="cart-list sheet">
-          <li
-            v-for="(pizza, i) in cartStore.getPizzasExtended"
-            :key="i"
-            class="cart-list__item"
-          >
-            <div class="product cart-list__product">
-              <img
-                :src="getImage('product.svg')"
-                class="product__img"
-                width="56"
-                height="56"
-                :alt="pizza.name"
-              />
-              <div class="product__text">
-                <h2>{{ pizza.name }}</h2>
-                <ul>
-                  <li>{{ pizza.size.name }}, {{ pizza.dough.name }} тесто</li>
-                  <li>Соус: {{ pizza.sauce.name }}</li>
-                  <li>
-                    Начинка:
-                    {{ pizza.ingredients.map((i) => i.name).join(", ") }}
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <AppCounter
-              class="cart-list__counter"
-              :value="pizza.quantity"
-              accent
-              @update:value="cartStore.setPizzaQuantity(i, $event)"
-            />
-
-            <div class="cart-list__price">
-              <b>{{ pizza.price }} ₽</b>
-            </div>
-
-            <div class="cart-list__button">
-              <button
-                type="button"
-                class="cart-list__edit"
-                @click="editPizza(i)"
-              >
-                Изменить
-              </button>
-            </div>
-          </li>
+          <CartListItem
+              v-for="(pizza, i) in cartStore.getPizzasExtended"
+              :key="i"
+              :pizza="pizza"
+              :index="i"
+              @update:quantity="cartStore.setPizzaQuantity"
+              @editPizza="editPizza"
+          />
         </ul>
 
         <div class="cart__additional">
           <ul class="additional-list">
-            <li
-              v-for="misc in cartStore.miscExtended"
-              :key="misc.id"
-              class="additional-list__item sheet"
-            >
-              <p class="additional-list__description">
-                <img
-                  :src="getImage(`${misc.image}.svg`)"
-                  width="39"
-                  height="60"
-                  alt="Coca-Cola 0,5 литра"
-                />
-                <span>{{ misc.name }}</span>
-              </p>
-
-              <div class="additional-list__wrapper">
-                <AppCounter
-                  class="additional-list__counter"
-                  :value="misc.quantity"
-                  accent
-                  :min="0"
-                  :max="MAX_INGREDIENT_COUNT"
-                  @update:value="cartStore.setMiscQuantity(misc.id, $event)"
-                />
-
-                <div class="additional-list__price">
-                  <b>× {{ misc.price }} ₽</b>
-                </div>
-              </div>
-            </li>
+            <AdditionalListItem
+                v-for="misc in cartStore.miscExtended"
+                :key="misc.id"
+                :misc="misc"
+                @update:quantity="onMiscQuantityUpdate"
+            />
           </ul>
         </div>
 
@@ -108,6 +50,7 @@
                 class="select"
                 @input="deliveryOption = $event.target.value"
               >
+                <option :value="-2">Заберу сам</option>
                 <option :value="-1">Новый адрес</option>
                 <option
                   v-for="address in profileStore.addresses"
@@ -184,33 +127,38 @@
 </template>
 
 <script setup>
-import AppCounter from "@/common/components/AppCounter.vue";
 import { useCartStore } from "@/stores/cartStore";
 import { usePizzaStore } from "@/stores/pizzaStore";
 import { useRouter } from "vue-router";
 import { computed, ref } from "vue";
 import { useProfileStore } from "@/stores/profileStore";
-import { MAX_INGREDIENT_COUNT } from "@/common/constants/constants";
-
-const getImage = (image) => {
-  return new URL(`../assets/img/${image}`, import.meta.url).href;
-};
+import { useAuthStore } from "@/stores/authStore";
+import CartListItem from "@/modules/cart/CartListItem.vue";
+import AdditionalListItem from "@/modules/cart/AdditionalListItem.vue";
 
 const cartStore = useCartStore();
 const pizzaStore = usePizzaStore();
 const profileStore = useProfileStore();
+const authStore = useAuthStore();
 
 const router = useRouter();
-
-const deliveryOption = ref(-1);
-const isNewAddress = computed(() => deliveryOption.value === -1);
-
-const submit = async () => {
-  if (deliveryOption.value === "home") {
-    cartStore.setAddress(profileStore.addresses[0]);
+const deliveryOption = ref(-2);
+const isNewAddress = computed(() => Number(deliveryOption.value) === -1);
+const isNoAddress = computed(() => Number(deliveryOption.value) === -2);
+const deliveryAddress = computed(() => {
+  if (isNewAddress.value) {
+    return null;
+  } else {
+    const existedAddress =
+      profileStore.addresses.find(
+        (addr) => addr.id === Number(deliveryOption.value)
+      ) ?? null;
+    if (existedAddress) {
+      cartStore.setAddress(existedAddress);
+    }
+    return existedAddress;
   }
-  await router.push({ name: "success" });
-};
+});
 
 const phone = computed({
   get() {
@@ -255,9 +203,30 @@ const editPizza = async (index) => {
   });
   await router.push({ name: "home" });
 };
+
+const submit = async () => {
+  if (isNoAddress.value) {
+    cartStore.unsetAddress();
+  } else if (!isNewAddress.value) {
+    cartStore.setAddress(deliveryAddress.value);
+  }
+
+  const res = await cartStore.publishOrder();
+  if (res.__state === "success") {
+    authStore.isAuthenticated && (await profileStore.loadOrders());
+    await router.push({ name: "success" });
+    cartStore.$reset();
+  } else if (isNoAddress.value) {
+    cartStore.resetAddress();
+  }
+};
+
+const onMiscQuantityUpdate = (miscId, newQuantity) => {
+  cartStore.setMiscQuantity(miscId, newQuantity);
+};
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "@/assets/scss/ds-system/ds.scss";
 @import "@/assets/scss/mixins/mixins.scss";
 
@@ -289,7 +258,6 @@ const editPizza = async (index) => {
 .cart-form__select {
   display: flex;
   align-items: center;
-
   margin-right: auto;
 
   span {
@@ -521,6 +489,7 @@ const editPizza = async (index) => {
   @include r-s16-h19;
 
   display: block;
+  width: 148px;
 
   margin: 0;
   padding: 8px 30px 8px 16px;
