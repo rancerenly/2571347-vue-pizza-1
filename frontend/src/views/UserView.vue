@@ -30,3 +30,34 @@ const route = useRoute();
 
 const routeName = computed(() => route.name);
 </script>
+
+<style lang="scss" scoped>
+@import "@/assets/scss/app.scss";
+
+.layout__title {
+  margin-bottom: 27px;
+}
+.layout__link {
+  @include b-s14-h16;
+
+  display: block;
+
+  padding: 8px 14px;
+
+  transition: 0.3s;
+
+  color: $black;
+
+  &--active {
+    background-color: rgba($green-500, 0.1);
+  }
+
+  &:hover {
+    background-color: rgba($green-500, 0.2);
+  }
+
+  &:active {
+    color: rgba($black, 0.5);
+  }
+}
+</style>

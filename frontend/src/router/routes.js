@@ -1,8 +1,8 @@
 import {isLoggedIn} from "@/middlewares/is-logging";
 
-const routes = [
+export const routes = [
   {
-    path: "/",
+    path: "",
     name: "home",
     component: () => import("../views/HomeView.vue"),
     meta: { layout: "AppLayoutDefault" },
@@ -29,7 +29,7 @@ const routes = [
     path: "/user",
     name: "user",
     component: () => import("@/views/UserView.vue"),
-    meta: { layout: "AppLayoutDefault",   midllewares: [isLoggedIn] },
+    meta: { layout: "AppLayoutDefault", middlewares: [isLoggedIn] },
     children: [
       {
         path: "orders",

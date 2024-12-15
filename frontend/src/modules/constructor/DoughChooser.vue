@@ -28,6 +28,8 @@
 </template>
 
 <script setup>
+import {getImage} from "@/common/helpers/get-image";
+
 defineProps({
   modelValue: {
     type: Number,
@@ -40,10 +42,6 @@ defineProps({
 });
 
 const emit = defineEmits(["update:modelValue"]);
-
-const getImage = (image) => {
-  return new URL(`../../assets/img/${image}`, import.meta.url).href;
-};
 </script>
 
 <style lang="scss" scoped>

@@ -30,3 +30,19 @@ export const normalizeSauces = (sauce) => {
     value: sauces[sauce.id],
   };
 };
+
+export const fixItems = (items, normalizeItem) => {
+  const fixedItems = [];
+  const itemNames = new Set();
+
+  for (const item of items) {
+    if (!itemNames.has(item.name)) {
+      itemNames.add(item.name);
+      const normalizedItem =
+        typeof normalizeItem === "function" ? normalizeItem(item) : item;
+      fixedItems.push(normalizedItem);
+    }
+  }
+
+  return fixedItems;
+};
