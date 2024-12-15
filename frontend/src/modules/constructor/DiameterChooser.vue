@@ -8,7 +8,7 @@
           v-for="sizeType in items"
           :key="sizeType.id"
           class="diameter__input"
-          :class="`diameter__input--${sizeType.id}`"
+          :class="`diameter__input--${sizeType.value}`"
         >
           <input
             type="radio"
@@ -72,8 +72,7 @@ const emit = defineEmits(["update:modelValue"]);
       height: 36px;
 
       content: "";
-      transition: 0.3s;
-
+      transition: all 0.3s ease;
       border-radius: 50%;
       background-color: $green-100;
       background-image: url("@/assets/img/diameter.svg");
@@ -113,6 +112,7 @@ const emit = defineEmits(["update:modelValue"]);
   input {
     &:checked + span::before {
       box-shadow: $shadow-large;
+      transform: translate(0, -50%) scale(1.3);
     }
   }
 }
