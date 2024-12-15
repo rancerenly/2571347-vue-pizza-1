@@ -123,6 +123,7 @@ const updateAddress = (address, data) => {
 
     padding-top: 0;
     padding-bottom: 26px;
+    margin-bottom: 26px;
 
     p {
       @include r-s16-h19;

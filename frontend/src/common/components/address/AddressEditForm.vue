@@ -5,64 +5,42 @@
     </div>
 
     <div class="address-form__wrapper">
-      <div class="address-form__input">
-        <label class="input">
-          <span>Название адреса*</span>
-          <input
-            v-model="name"
-            type="text"
-            name="addr-name"
-            placeholder="Введите название адреса"
-            required
-          />
-        </label>
-      </div>
-      <div class="address-form__input address-form__input--size--normal">
-        <label class="input">
-          <span>Улица*</span>
-          <input
-            v-model="street"
-            type="text"
-            name="addr-street"
-            placeholder="Введите название улицы"
-            required
-          />
-        </label>
-      </div>
-      <div class="address-form__input address-form__input--size--small">
-        <label class="input">
-          <span>Дом*</span>
-          <input
-            v-model="building"
-            type="text"
-            name="addr-house"
-            placeholder="Введите номер дома"
-            required
-          />
-        </label>
-      </div>
-      <div class="address-form__input address-form__input--size--small">
-        <label class="input">
-          <span>Квартира</span>
-          <input
-            v-model="flat"
-            type="text"
-            name="addr-apartment"
-            placeholder="Введите № квартиры"
-          />
-        </label>
-      </div>
-      <div class="address-form__input">
-        <label class="input">
-          <span>Комментарий</span>
-          <input
-            v-model="comment"
-            type="text"
-            name="addr-comment"
-            placeholder="Введите комментарий"
-          />
-        </label>
-      </div>
+      <InputField
+          v-model="name"
+          label="Название адреса"
+          name="addr-name"
+          placeholder="Введите название адреса"
+          required
+      />
+      <InputField
+          v-model="street"
+          label="Улица"
+          name="addr-street"
+          placeholder="Введите название улицы"
+          sizeClass="address-form__input--size--normal"
+          required
+      />
+      <InputField
+          v-model="building"
+          label="Дом"
+          name="addr-house"
+          placeholder="Введите номер дома"
+          sizeClass="address-form__input--size--small"
+          required
+      />
+      <InputField
+          v-model="flat"
+          label="Квартира"
+          name="addr-apartment"
+          placeholder="Введите № квартиры"
+          sizeClass="address-form__input--size--small"
+      />
+      <InputField
+          v-model="comment"
+          label="Комментарий"
+          name="addr-comment"
+          placeholder="Введите комментарий"
+      />
     </div>
 
     <div class="address-form__buttons">
@@ -80,6 +58,7 @@
 
 <script setup>
 import { ref } from "vue";
+import InputField from "@/common/components/address/InputField.vue";
 
 const props = defineProps({
   address: {
@@ -135,22 +114,6 @@ const save = () => {
   width: 80%;
   padding: 16px;
 }
-
-.address-form__input {
-  width: 100%;
-  margin-bottom: 16px;
-
-  &--size {
-    &--normal {
-      width: 60.5%;
-    }
-
-    &--small {
-      width: 18%;
-    }
-  }
-}
-
 .address-form__buttons {
   display: flex;
   justify-content: flex-end;
