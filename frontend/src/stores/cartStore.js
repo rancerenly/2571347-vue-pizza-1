@@ -20,7 +20,7 @@ export const useCartStore = defineStore("cartStore", {
 
       return state.pizzas.map((pizza) => {
         const pizzaIngredientsIds = pizza.ingredients.map(
-            (i) => i.ingredientId
+          (i) => i.ingredientId,
         );
 
         return {
@@ -30,7 +30,7 @@ export const useCartStore = defineStore("cartStore", {
           size: data.sizes.find((i) => i.id === pizza.sizeId),
           sauce: data.sauces.find((i) => i.id === pizza.sauceId),
           ingredients: data.ingredients.filter((i) =>
-              pizzaIngredientsIds.includes(i.id)
+            pizzaIngredientsIds.includes(i.id),
           ),
           price: getPizzaPrice(pizza),
         };
@@ -48,12 +48,12 @@ export const useCartStore = defineStore("cartStore", {
     },
     total: (state) => {
       const pizzaPrices = state.getPizzasExtended
-          .map((item) => item.quantity * item.price)
-          .reduce((acc, val) => acc + val, 0);
+        .map((item) => item.quantity * item.price)
+        .reduce((acc, val) => acc + val, 0);
 
       const miscPrices = state.miscExtended
-          .map((item) => item.quantity * item.price)
-          .reduce((acc, val) => acc + val, 0);
+        .map((item) => item.quantity * item.price)
+        .reduce((acc, val) => acc + val, 0);
 
       return pizzaPrices + miscPrices;
     },

@@ -13,11 +13,11 @@
   </div>
 
   <AddressEditForm
-      v-else
-      :address="address"
-      :title="`Адрес ${index}`"
-      @delete="emit('delete')"
-      @save="save"
+    v-else
+    :address="address"
+    :title="`Адрес ${index}`"
+    @delete="emit('delete')"
+    @save="save"
   />
 </template>
 
