@@ -34,12 +34,11 @@ export const useAuthStore = defineStore("auth", {
       this.user = null;
     },
 
-    async whoami() {
+    async whoAmI() {
       resources.auth.setAuthHeader(jwtService.getToken());
       const profileStore = useProfileStore();
 
-      /* Выполняем цепочку действий по получению данных, необходимых для нормальной работы приложения */
-      const res1 = await resources.auth.whoami();
+      const res1 = await resources.auth.whoAmI();
       if (res1.__state !== "success") {
         await this.logout();
         return;

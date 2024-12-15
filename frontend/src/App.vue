@@ -26,7 +26,7 @@ const checkLoggedIn = async () => {
   }
 
   try {
-    await authStore.whoami();
+    await authStore.whoAmI();
     const { redirect } = route.query;
     await router.push(redirect ? redirect : { name: "home" });
   } catch (e) {

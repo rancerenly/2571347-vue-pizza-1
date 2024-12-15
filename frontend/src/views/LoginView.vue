@@ -99,7 +99,7 @@ const login = async () => {
   });
 
   if (resMsg === "success") {
-    await authStore.whoami();
+    await authStore.whoAmI();
     await router.push({ name: "home" });
   } else {
     errorMessage.value = resMsg;
