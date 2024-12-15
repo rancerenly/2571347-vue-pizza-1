@@ -29,7 +29,7 @@ export const routes = [
     path: "/user",
     name: "user",
     component: () => import("@/views/UserView.vue"),
-    meta: { layout: "AppLayoutDefault",   midllewares: [isLoggedIn] },
+    meta: { layout: "AppLayoutDefault", middlewares: [isLoggedIn] },
     children: [
       {
         path: "orders",
